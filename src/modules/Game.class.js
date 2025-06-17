@@ -51,57 +51,92 @@ class Game {
   }
 
   moveLeft() {
+    let hasNewPosition = false;
+
     for (let row = 0; row < this.BOARD_SIZE; row++) {
-      this.gameField[row] = [...this.lineShift(this.gameField[row])];
+      const shift = this.lineShift(this.gameField[row]);
+
+      if (shift.isMove) {
+        hasNewPosition = true;
+        this.gameField[row] = [...shift.line];
+      }
     }
 
-    return this.setNewPosition();
+    if (hasNewPosition) {
+      this.setNewPosition();
+    }
   }
 
   moveRight() {
+    let hasNewPosition = false;
+
     for (let row = 0; row < this.BOARD_SIZE; row++) {
-      this.gameField[row] = [
-        ...this.lineShift(this.gameField[row].reverse()),
-      ].reverse();
+      const shift = this.lineShift([...this.gameField[row]].reverse());
+
+      if (shift.isMove) {
+        hasNewPosition = true;
+        this.gameField[row] = [...shift.line.reverse()];
+      }
     }
 
-    return this.setNewPosition();
+    if (hasNewPosition) {
+      this.setNewPosition();
+    }
   }
 
   moveUp() {
+    let hasNewPosition = false;
+
     for (let col = 0; col < this.BOARD_SIZE; col++) {
-      this.lineShift([
+      const shift = this.lineShift([
         this.gameField[0][col],
         this.gameField[1][col],
         this.gameField[2][col],
         this.gameField[3][col],
-      ]).forEach((cell, index) => {
-        this.gameField[index][col] = cell;
-      });
+      ]);
+
+      if (shift.isMove) {
+        hasNewPosition = true;
+
+        shift.line.forEach((cell, index) => {
+          this.gameField[index][col] = cell;
+        });
+      }
     }
 
-    return this.setNewPosition();
+    if (hasNewPosition) {
+      this.setNewPosition();
+    }
   }
 
   moveDown() {
+    let hasNewPosition = false;
+
     for (let col = 0; col < this.BOARD_SIZE; col++) {
-      this.lineShift([
+      const shift = this.lineShift([
         this.gameField[3][col],
         this.gameField[2][col],
         this.gameField[1][col],
         this.gameField[0][col],
-      ])
-        .reverse()
-        .forEach((cell, index) => {
+      ]);
+
+      if (shift.isMove) {
+        hasNewPosition = true;
+
+        shift.line.reverse().forEach((cell, index) => {
           this.gameField[index][col] = cell;
         });
+      }
     }
 
-    return this.setNewPosition();
+    if (hasNewPosition) {
+      this.setNewPosition();
+    }
   }
 
   lineShift(line) {
     let finish = false;
+    let isMove = false;
 
     while (!finish) {
       finish = true;
@@ -112,15 +147,20 @@ class Game {
             line[i - 1] = line[i];
             line[i] = 0;
             finish = false;
+            isMove = true;
           } else if (line[i - 1] === line[i]) {
             line[i - 1] *= 2;
             line[i] = 0;
+            isMove = true;
           }
         }
       }
     }
 
-    return line;
+    return {
+      isMove: isMove,
+      line: line,
+    };
   }
 
   /**
@@ -202,11 +242,7 @@ class Game {
       }
 
       this.gameField[row][col] = 2;
-
-      return true;
     }
-
-    return false;
   }
 }
 

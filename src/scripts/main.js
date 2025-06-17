@@ -9,6 +9,8 @@ const gameField = [...document.getElementsByClassName('field-row')].map(
 );
 
 const setGameField = () => {
+  let hasEmptyCell = false;
+
   game.getState().forEach((row, rowIndex) => {
     row.forEach((col, colIndex) => {
       gameField[rowIndex][colIndex].classList = 'field-cell';
@@ -16,46 +18,48 @@ const setGameField = () => {
       if (col) {
         gameField[rowIndex][colIndex].innerText = col;
         gameField[rowIndex][colIndex].classList.add(`field-cell--${col}`);
+
         if (col === 2048) {
           document.querySelector('.message-win').classList.remove('hidden');
         }
       } else {
         gameField[rowIndex][colIndex].innerText = '';
+        hasEmptyCell = true;
       }
     });
   });
   document.querySelector('.game-score').innerText = game.getScore();
+
+  if (hasEmptyCell) {
+    document.querySelector('.message-lose').classList.add('hidden');
+  } else {
+    document.querySelector('.message-lose').classList.remove('hidden');
+  }
 };
 
 document.addEventListener('keydown', (ev) => {
-  let isNewTurn = false;
-
   switch (ev.key) {
     case 'ArrowUp':
-      isNewTurn = game.moveUp();
+      game.moveUp();
       break;
 
     case 'ArrowDown':
-      isNewTurn = game.moveDown();
+      game.moveDown();
       break;
 
     case 'ArrowLeft':
-      isNewTurn = game.moveLeft();
+      game.moveLeft();
       break;
 
     case 'ArrowRight':
-      isNewTurn = game.moveRight();
+      game.moveRight();
       break;
 
     default:
       return 0;
   }
 
-  if (isNewTurn) {
-    setGameField();
-  } else {
-    document.querySelector('.message-lose').classList.remove('hidden');
-  }
+  setGameField();
 });
 
 startButton.addEventListener('click', (ev) => {
