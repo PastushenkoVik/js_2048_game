@@ -12,7 +12,7 @@ class Game {
     [0, 0, 0, 0],
     [0, 0, 0, 0],
   ];
-  status = 'idle';
+  status = '';
 
   BOARD_SIZE = 4;
   /**
@@ -30,6 +30,8 @@ class Game {
    * initial state.
    */
   constructor(initialState) {
+    this.status = 'idle';
+
     if (initialState && initialState.length === this.BOARD_SIZE) {
       for (let row = 0; row < this.BOARD_SIZE; row++) {
         for (let column = 0; column < this.BOARD_SIZE; column++) {
@@ -200,7 +202,7 @@ class Game {
     let [row1, col1] = this.getRandomPosition();
     let [row2, col2] = this.getRandomPosition();
 
-    this.status = 'idle';
+    this.status = 'playing';
 
     while (col1 === col2 && row1 === row2) {
       [row1, col1] = this.getRandomPosition();
@@ -241,7 +243,7 @@ class Game {
         [row, col] = this.getRandomPosition();
       }
 
-      this.gameField[row][col] = 2;
+      this.gameField[row][col] = Math.random() < 0.9 ? 2 : 4;
     }
   }
 }

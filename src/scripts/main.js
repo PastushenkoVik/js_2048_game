@@ -42,10 +42,12 @@ const isTurnPossible = () => {
 
   game.getState().forEach((row, rowIndex, arr) => {
     for (let i = 0; i < game.BOARD_SIZE; i++) {
-      if (
-        (i !== 0 && row[i] === row[i - 1]) ||
-        (rowIndex < game.BOARD_SIZE - 2 && row[i] === arr[rowIndex + 1][i])
-      ) {
+      if (i !== 0 && row[i] === row[i - 1]) {
+        isSimilarSiblings = true;
+        break;
+      }
+
+      if (rowIndex !== 0 && row[i] === arr[rowIndex - 1][i]) {
         isSimilarSiblings = true;
         break;
       }
