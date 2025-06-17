@@ -30,11 +30,29 @@ const setGameField = () => {
   });
   document.querySelector('.game-score').innerText = game.getScore();
 
-  if (hasEmptyCell) {
+  if (hasEmptyCell || isTurnPossible()) {
     document.querySelector('.message-lose').classList.add('hidden');
   } else {
     document.querySelector('.message-lose').classList.remove('hidden');
   }
+};
+
+const isTurnPossible = () => {
+  let isSimilarSiblings = false;
+
+  game.getState().forEach((row, rowIndex, arr) => {
+    for (let i = 0; i < game.BOARD_SIZE; i++) {
+      if (
+        (i !== 0 && row[i] === row[i - 1]) ||
+        (rowIndex < game.BOARD_SIZE - 2 && row[i] === arr[rowIndex + 1][i])
+      ) {
+        isSimilarSiblings = true;
+        break;
+      }
+    }
+  });
+
+  return isSimilarSiblings;
 };
 
 document.addEventListener('keydown', (ev) => {
@@ -77,6 +95,3 @@ startButton.addEventListener('click', (ev) => {
 
   setGameField();
 });
-
-// eslint-disable-next-line no-console
-console.log(game.getState());
